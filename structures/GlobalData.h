@@ -23,8 +23,6 @@ namespace oc {
 
     public:
         GlobalData() = default;
-        GlobalData(int simTime, int simStep, int cond, int a, int t, int init, int dens, int specHeat, int nN, int eN);
-
 
         void parseFromFile(const std::string& fileName);
         void printData();

@@ -1,18 +1,6 @@
 #include "GlobalData.h"
 
 namespace oc {
-    GlobalData::GlobalData(int simTime, int simStep, int cond, int a, int t, int init, int dens, int specHeat, int nN, int eN) {
-        this->simulationTime = simTime;
-        simulationStepTime = simStep;
-        conductivity = cond;
-        alfa = a;
-        tot = t;
-        initialTemp = init;
-        density = dens;
-        specificHeat = specHeat;
-        nodesNumber = nN;
-        elementsNumber = eN;
-    }
 
     void GlobalData::parseFromFile(const std::string& fileName) {
         std::ifstream inputFile(fileName);
