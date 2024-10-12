@@ -1,0 +1,3 @@
+C:/Users/xoska/CLionProjects/MES_proj/cmake-build-debug/CMakeFiles/MES_proj.dir
+C:/Users/xoska/CLionProjects/MES_proj/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/xoska/CLionProjects/MES_proj/cmake-build-debug/CMakeFiles/rebuild_cache.dir
