@@ -10,4 +10,6 @@ add_executable(MES_proj main.cpp
         structures/structs.h
         structures/grid.cpp
         structures/grid.h
+        helpers/gauss.cpp
+        helpers/gauss.h
 )
