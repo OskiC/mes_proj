@@ -1,11 +1,11 @@
 #include "structures\GlobalData.h"
 #include "structures\grid.h"
-#include <filesystem>
+#include "helpers\gauss.h"
 
 int main() {
     std::string fName = "../data/test14.txt";
 
-    oc::GlobalData globalData{};
+    /*oc::GlobalData globalData{};
     globalData.parseFromFile(fName);
 
     oc::Grid grid;
@@ -18,7 +18,12 @@ int main() {
 
     grid.printNodes();
     grid.printElemets();
+    */
+    for(int i = 1; i <= 3; i++)
+        std::cout << oc::gaussQuadrature1d(i, oc::f1d) << std::endl;
 
-    std::cout << std::filesystem::current_path();
+    for(int i = 1; i <= 3; i++)
+        std::cout << oc::gaussQuadrature2d(i, oc::f2d) << std::endl;
+
     return 0;
 }
