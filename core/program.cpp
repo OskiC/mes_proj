@@ -2,7 +2,7 @@
 
 namespace oc {
 
-    void Program::zadanie1(std::string fName){
+    void Program::zadanie1(std::string &fName){
         oc::GlobalData globalData{};
         globalData.parseFromFile(fName);
 
