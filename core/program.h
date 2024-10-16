@@ -11,7 +11,7 @@ namespace oc {
     public:
         Program() = default;
 
-        void zadanie1();
+        void zadanie1(std::string fName);
         void zadanie2();
 
     };
