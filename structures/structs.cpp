@@ -13,20 +13,24 @@ namespace oc {
         if (num == 4) {
             ksi = {-1.0 / sqrt(3), 1.0 / sqrt(3), 1.0 / sqrt(3), -1.0 / sqrt(3)};
             eta = {-1.0 / sqrt(3), -1.0 / sqrt(3), 1.0 / sqrt(3), 1.0 / sqrt(3)};
-            dN_dXi.resize(4, std::vector<double>(4));
-            dN_dEta.resize(4, std::vector<double>(4));
         }
 
         for (int i = 0; i < num; i++) {
-            dN_dXi[i][0] = -0.25 * (1 - eta[i]);
-            dN_dXi[i][1] = 0.25 * (1 - eta[i]);
-            dN_dXi[i][2] = 0.25 * (1 + eta[i]);
-            dN_dXi[i][3] = -0.25 * (1 + eta[i]);
+            std::vector<double> dXi_row(4, 0.0);
+            std::vector<double> dEta_row(4, 0.0);
 
-            dN_dEta[i][0] = -0.25 * (1 - ksi[i]);
-            dN_dEta[i][1] = -0.25 * (1 + ksi[i]);
-            dN_dEta[i][2] = 0.25 * (1 + ksi[i]);
-            dN_dEta[i][3] = 0.25 * (1 - ksi[i]);
+            dXi_row[0] = -0.25 * (1 - eta[i]);
+            dXi_row[1] =  0.25 * (1 - eta[i]);
+            dXi_row[2] =  0.25 * (1 + eta[i]);
+            dXi_row[3] = -0.25 * (1 + eta[i]);
+
+            dEta_row[0] = -0.25 * (1 - ksi[i]);
+            dEta_row[1] = -0.25 * (1 + ksi[i]);
+            dEta_row[2] =  0.25 * (1 + ksi[i]);
+            dEta_row[3] =  0.25 * (1 - ksi[i]);
+
+            dN_dXi.push_back(dXi_row);
+            dN_dEta.push_back(dEta_row);
         }
     }
 
@@ -62,6 +66,14 @@ namespace oc {
     void Jakobian::printJakob() {
         for(auto & i : J){
             for(double j : i) {
+                std::cout << j << " ";
+            }
+            std::cout << "\n";
+        }
+
+        std::cout << "\nMacierz J^-1\n";
+        for(auto & i : J1){
+            for(double j : i){
                 std::cout << j << " ";
             }
             std::cout << "\n";

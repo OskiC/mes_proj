@@ -50,7 +50,7 @@ namespace oc {
             jakobian.calcJakob(elemUniv, x, y, 1);
             jakobian.calcDetJ();
             jakobian.calcJakobInver();
-            std::cout << "Wyznacznik Jacobiego w punkcie calkowania " << i + 1 << ": " << jakobian.getDet() << std::endl;
+            std::cout << "Wyznacznik Jacobiego w punkcie calkowania " << 1 << ": " << jakobian.getDet() << std::endl;
             jakobian.printJakob();
             std::cout << "\n";
         //}
