@@ -37,4 +37,23 @@ namespace oc {
         }
     }
 
+    void Program::zadanie3(){
+        ElemUniv elemUniv;
+        elemUniv.initialize(4); // 2d - 4punkty
+
+        double x[4] = {0, 0.025, 0.025, 0};
+        double y[4] = {0, 0, 0.025, 0.025};
+
+        Jakobian jakobian;
+
+        //for(int i = 0; i < 4; i++) {
+            jakobian.calcJakob(elemUniv, x, y, 1);
+            jakobian.calcDetJ();
+            jakobian.calcJakobInver();
+            std::cout << "Wyznacznik Jacobiego w punkcie calkowania " << i + 1 << ": " << jakobian.getDet() << std::endl;
+            jakobian.printJakob();
+            std::cout << "\n";
+        //}
+    }
+
 } // oc

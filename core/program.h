@@ -3,6 +3,7 @@
 
 #include "..\structures\GlobalData.h"
 #include "..\structures\grid.h"
+#include "..\structures\structs.h"
 #include "..\helpers\gauss.h"
 
 namespace oc {
@@ -13,6 +14,7 @@ namespace oc {
 
         void zadanie1(std::string &fName);
         void zadanie2();
+        void zadanie3();
 
     };
 
