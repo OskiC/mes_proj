@@ -46,14 +46,24 @@ namespace oc {
 
         Jakobian jakobian;
 
-        //for(int i = 0; i < 4; i++) {
-            jakobian.calcJakob(elemUniv, x, y, 1);
+        for(int i = 0; i < 4; i++) {
+            jakobian.calcJakob(elemUniv, x, y, i);
             jakobian.calcDetJ();
-            jakobian.calcJakobInver();
-            std::cout << "Wyznacznik Jacobiego w punkcie calkowania " << 1 << ": " << jakobian.getDet() << std::endl;
+            jakobian.calcJakobInver(elemUniv, i);
+            std::cout << "Wyznacznik Jakobiana w " << i + 1 << ": " << jakobian.getDet() << std::endl;
             jakobian.printJakob();
+
+            std::cout << "\nPochodne gaussa w pkt " << i + 1 << ":\n";
+            for (int j = 0; j < 4; j++) {
+                std::cout << "dN" << j + 1 << "/dx: " << jakobian.dN_dX[i][j]
+                          << ", dN" << j + 1 << "/dy: " << jakobian.dN_dY[i][j] << std::endl;
+            }
             std::cout << "\n";
-        //}
+        }
     }
+
+    void Program::zadanie4(){
+    }
+
 
 } // oc

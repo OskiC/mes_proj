@@ -9,7 +9,7 @@ int main() {
     //ourProgram.zadanie1(fName);
     //ourProgram.zadanie2();
     ourProgram.zadanie3();
-
+    //ourProgram.zadanie4();
 
     return 0;
 }

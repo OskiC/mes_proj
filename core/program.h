@@ -15,6 +15,7 @@ namespace oc {
         void zadanie1(std::string &fName);
         void zadanie2();
         void zadanie3();
+        void zadanie4();
 
     };
 
