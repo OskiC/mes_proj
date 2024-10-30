@@ -10,7 +10,7 @@ namespace oc {
 
         if (num == 4) {
             // 2x2 Gauss Quadrature Points
-            ksi = {-1.0 / sqrt(3), -1.0 / sqrt(3), 1.0 / sqrt(3), 1.0 / sqrt(3)};
+            ksi = {-1.0 / sqrt(3), 1.0 / sqrt(3), 1.0 / sqrt(3), -1.0 / sqrt(3)};
             eta = {-1.0 / sqrt(3), -1.0 / sqrt(3), 1.0 / sqrt(3), 1.0 / sqrt(3)};
         } else if (num == 9) {
             // 3x3 Gauss Quadrature Points

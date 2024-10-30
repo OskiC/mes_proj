@@ -44,35 +44,40 @@ namespace oc {
         elemUniv.initialize(numPoints); // 2d - 4punkty
         //elemUniv.print_dnx();
 
-        double x[4] = {0, 0.025, 0.025, 0};
-        double y[4] = {0, 0, 0.025, 0.025};
+        double x[4] = {0.01, 0.025, 0.025, 0};
+        double y[4] = {-0.01, 0, 0.025, 0.025};
 
         double k = 30;   // Example thermal conductivity
         double dV = 1.0; // Example volume element
 
-        Jakobian jakobian(numPoints);
+        std::vector<Jakobian> jakobians(numPoints);
+        for(int i = 0; i < numPoints; i++){
+            Jakobian jakobian(numPoints);
+            jakobians.push_back(jakobian);
+        }
 
         // Loop through each Gauss point to calculate Jacobians and derivatives
         for(int i = 0; i < numPoints; i++) {
-            jakobian.calcJakob(elemUniv, x, y, i);  // Calculate Jacobian at point i
-            jakobian.calcDetJ();                    // Calculate determinant of Jacobian
-            jakobian.calcJakobInver(elemUniv, i);   // Calculate inverse Jacobian
+            jakobians[i].calcJakob(elemUniv, x, y, i);  // Calculate Jacobian at point i
+            jakobians[i].calcDetJ();                    // Calculate determinant of Jacobian
+            jakobians[i].calcJakobInver(elemUniv, i);   // Calculate inverse Jacobian
 
-            std::cout << "Wyznacznik Jakobiana w " << i + 1 << ": " << jakobian.getDet() << std::endl;
-            jakobian.printJakob();
+            std::cout << "Wyznacznik Jakobiana w " << i + 1 << ": " << jakobians[i].getDet() << std::endl;
+            jakobians[i].printJakob();
 
-            // Print derivatives with respect to x and y
+                // Print derivatives with respect to x and y
             std::cout << "\nPochodne gaussa w pkt " << i + 1 << ":\n";
             for (int j = 0; j < 4; j++) {
-                std::cout << "dN" << j + 1 << "/dx: " << jakobian.dN_dX[i][j]
-                          << ", dN" << j + 1 << "/dy: " << jakobian.dN_dY[i][j] << std::endl;
+                std::cout << "dN" << j + 1 << "/dx: " << jakobians[i].dN_dX[i][j]
+                          << ", dN" << j + 1 << "/dy: " << jakobians[i].dN_dY[i][j] << std::endl;
             }
             std::cout << "\n";
+            jakobians[i].computeH(k, dV);
+            std::cout << "Macierz H:" << std::endl;
+            jakobians[i].printH();
         }
 
-        jakobian.computeH(k, dV);
-        std::cout << "Macierz H:" << std::endl;
-        jakobian.printH();
+
     }
 
     void Program::zadanie4(){

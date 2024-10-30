@@ -26,8 +26,8 @@ namespace oc {
 
         for (int i = 0; i < numPoints; i++) {
             J[0][0] += elemUniv.dN_dXi[pointIndex][i] * x[i];  // dx/dξ
-            J[0][1] += elemUniv.dN_dEta[pointIndex][i] * x[i]; // dx/dη
-            J[1][0] += elemUniv.dN_dXi[pointIndex][i] * y[i];  // dy/dξ
+            J[1][0] += elemUniv.dN_dEta[pointIndex][i] * x[i]; // dx/dη
+            J[0][1] += elemUniv.dN_dXi[pointIndex][i] * y[i];  // dy/dξ
             J[1][1] += elemUniv.dN_dEta[pointIndex][i] * y[i]; // dy/dη
         }
     }
@@ -81,7 +81,7 @@ namespace oc {
             for (int i = 0; i < numPoints; i++) {
                 for (int j = 0; j < numPoints; j++) {
                     Hpc[i][j] = (dN_dX[pointIndex][i] * dN_dX[pointIndex][j] +
-                                 dN_dY[pointIndex][i] * dN_dY[pointIndex][j]) * k * getDet();
+                                 dN_dY[pointIndex][i] * dN_dY[pointIndex][j]) * getDet();
                 }
             }
 
