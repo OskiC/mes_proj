@@ -5,6 +5,11 @@
 #include "jakobian.h"
 
 namespace oc {
+    Jakobian::Jakobian(int num) : numPoints(num) {
+        dN_dX.resize(numPoints, std::vector<double>(numPoints, 0.0));
+        dN_dY.resize(numPoints, std::vector<double>(numPoints, 0.0));
+    }
+
     double Jakobian::getDet(){
         return detJ;
     }
@@ -13,13 +18,13 @@ namespace oc {
         detJ = J[0][0] * J[1][1] - J[0][1] * J[1][0];
     }
 
-    void Jakobian::calcJakob(ElemUniv& elemUniv, double x[4], double y[4], int pointIndex) {
+    void Jakobian::calcJakob(ElemUniv& elemUniv, double x[], double y[], int pointIndex) {
         J[0][0] = 0.0;
         J[0][1] = 0.0;
         J[1][0] = 0.0;
         J[1][1] = 0.0;
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < numPoints; i++) {
             J[0][0] += elemUniv.dN_dXi[pointIndex][i] * x[i];  // dx/dξ
             J[0][1] += elemUniv.dN_dEta[pointIndex][i] * x[i]; // dx/dη
             J[1][0] += elemUniv.dN_dXi[pointIndex][i] * y[i];  // dy/dξ
@@ -27,13 +32,15 @@ namespace oc {
         }
     }
 
-    void Jakobian::calc_dN_dX_dN_dY(oc::ElemUniv &elemUniv, int pointIndex) {
-        dN_dX.resize(4, std::vector<double>(4, 0.0));
-        dN_dY.resize(4, std::vector<double>(4, 0.0));
-        for (int i = 0; i < 4; i++) {
+    void Jakobian::calc_dN_dX_dN_dY(ElemUniv& elemUniv, int pointIndex) {
+        dN_dX.resize(numPoints, std::vector<double>(numPoints, 0.0));
+        dN_dY.resize(numPoints, std::vector<double>(numPoints, 0.0));
+
+        for (int i = 0; i < numPoints; i++) {
             dN_dX[pointIndex][i] = J1[0][0] * elemUniv.dN_dXi[pointIndex][i] + J1[0][1] * elemUniv.dN_dEta[pointIndex][i];
             dN_dY[pointIndex][i] = J1[1][0] * elemUniv.dN_dXi[pointIndex][i] + J1[1][1] * elemUniv.dN_dEta[pointIndex][i];
         }
+
     }
 
     void Jakobian::calcJakobInver(ElemUniv& elemUniv, int pointIndex) {
@@ -49,20 +56,79 @@ namespace oc {
         }
     }
 
+    void Jakobian::computeH(double k, double dV) {
+        H.resize(numPoints, std::vector<double>(numPoints, 0.0)); // Initialize H matrix
 
+        std::vector<double> weights;
+        if (numPoints == 4) {
+            weights = {1.0, 1.0, 1.0, 1.0}; // Uniform for 2x2 quadrature
+        } else if (numPoints == 9) {
+            weights = {5.0/9.0 * 5.0/9.0, 8.0/9.0 * 5.0/9.0, 5.0/9.0 * 5.0/9.0,
+                       8.0/9.0 * 5.0/9.0, 8.0/9.0 * 8.0/9.0, 8.0/9.0 * 5.0/9.0,
+                       5.0/9.0 * 5.0/9.0, 8.0/9.0 * 5.0/9.0, 5.0/9.0 * 5.0/9.0}; // 3x3 quadrature
+        } else if (numPoints == 16) {
+            weights = {
+                    0.3478548 * 0.3478548, 0.3478548 * 0.6521452, 0.3478548 * 0.6521452, 0.3478548 * 0.3478548,
+                    0.6521452 * 0.3478548, 0.6521452 * 0.6521452, 0.6521452 * 0.6521452, 0.6521452 * 0.3478548,
+                    0.6521452 * 0.3478548, 0.6521452 * 0.6521452, 0.6521452 * 0.6521452, 0.6521452 * 0.3478548,
+                    0.3478548 * 0.3478548, 0.3478548 * 0.6521452, 0.3478548 * 0.6521452, 0.3478548 * 0.3478548
+            }; // 4x4 quadrature
+        }
+
+        for (int pointIndex = 0; pointIndex < numPoints; pointIndex++) {
+            std::vector<std::vector<double>> Hpc(numPoints, std::vector<double>(numPoints, 0.0));
+
+            for (int i = 0; i < numPoints; i++) {
+                for (int j = 0; j < numPoints; j++) {
+                    Hpc[i][j] = (dN_dX[pointIndex][i] * dN_dX[pointIndex][j] +
+                                 dN_dY[pointIndex][i] * dN_dY[pointIndex][j]) * k * getDet();
+                }
+            }
+
+            double weightFactor = weights[pointIndex];
+            for (int i = 0; i < numPoints; i++) {
+                for (int j = 0; j < numPoints; j++) {
+                    H[i][j] += Hpc[i][j] * weightFactor * dV;
+                }
+            }
+
+            std::cout << "H matrix contribution at integration point " << pointIndex << ":\n";
+            for (const auto &row : Hpc) {
+                for (double val : row) {
+                    std::cout << val << " ";
+                }
+                std::cout << "\n";
+            }
+            std::cout << "\n";
+        }
+    }
+
+
+
+
+    void Jakobian::printH() {
+        std::cout << "Matrix H:\n";
+        for (int i = 0; i < H.size(); ++i) {
+            for (int j = 0; j < H[i].size(); ++j) {
+                std::cout << H[i][j] << " ";
+            }
+            std::cout << "\n";
+        }
+    }
 
     void Jakobian::printJakob() {
-        for(auto & i : J){
-            for(double j : i) {
-                std::cout << j << " ";
+        std::cout << "Matrix J:\n";
+        for (int i = 0; i < 2; ++i) {
+            for (int j = 0; j < 2; ++j) {
+                std::cout << J[i][j] << " ";
             }
             std::cout << "\n";
         }
 
-        std::cout << "\nMacierz J^-1\n";
-        for(auto & i : J1){
-            for(double j : i){
-                std::cout << j << " ";
+        std::cout << "\nMatrix J^-1:\n";
+        for (int i = 0; i < 2; ++i) {
+            for (int j = 0; j < 2; ++j) {
+                std::cout << J1[i][j] << " ";
             }
             std::cout << "\n";
         }

@@ -38,21 +38,30 @@ namespace oc {
     }
 
     void Program::zadanie3(){
+        int numPoints = 4; // Number of Gauss points (for 2D, typically 4 points)
+
         ElemUniv elemUniv;
-        elemUniv.initialize(4); // 2d - 4punkty
+        elemUniv.initialize(numPoints); // 2d - 4punkty
+        //elemUniv.print_dnx();
 
         double x[4] = {0, 0.025, 0.025, 0};
         double y[4] = {0, 0, 0.025, 0.025};
 
-        Jakobian jakobian;
+        double k = 30;   // Example thermal conductivity
+        double dV = 1.0; // Example volume element
 
-        for(int i = 0; i < 4; i++) {
-            jakobian.calcJakob(elemUniv, x, y, i);
-            jakobian.calcDetJ();
-            jakobian.calcJakobInver(elemUniv, i);
+        Jakobian jakobian(numPoints);
+
+        // Loop through each Gauss point to calculate Jacobians and derivatives
+        for(int i = 0; i < numPoints; i++) {
+            jakobian.calcJakob(elemUniv, x, y, i);  // Calculate Jacobian at point i
+            jakobian.calcDetJ();                    // Calculate determinant of Jacobian
+            jakobian.calcJakobInver(elemUniv, i);   // Calculate inverse Jacobian
+
             std::cout << "Wyznacznik Jakobiana w " << i + 1 << ": " << jakobian.getDet() << std::endl;
             jakobian.printJakob();
 
+            // Print derivatives with respect to x and y
             std::cout << "\nPochodne gaussa w pkt " << i + 1 << ":\n";
             for (int j = 0; j < 4; j++) {
                 std::cout << "dN" << j + 1 << "/dx: " << jakobian.dN_dX[i][j]
@@ -60,6 +69,10 @@ namespace oc {
             }
             std::cout << "\n";
         }
+
+        jakobian.computeH(k, dV);
+        std::cout << "Macierz H:" << std::endl;
+        jakobian.printH();
     }
 
     void Program::zadanie4(){

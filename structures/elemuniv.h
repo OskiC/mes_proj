@@ -19,6 +19,7 @@ namespace oc {
         std::vector<std::vector<double>> dN_dEta;
 
         void initialize(int num);
+        void print_dnx();
     };
 
 } // oc

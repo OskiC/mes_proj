@@ -1,7 +1,3 @@
-//
-// Created by xoska on 23.10.2024.
-//
-
 #ifndef MES_PROJ_JAKOBIAN_H
 #define MES_PROJ_JAKOBIAN_H
 
@@ -14,11 +10,15 @@ namespace oc {
         double J[2][2];
         double J1[2][2]; // J^-1
         double detJ;
+        int numPoints;
+        std::vector<std::vector<double>> H;
 
 
     public:
         std::vector<std::vector<double>> dN_dX;
         std::vector<std::vector<double>> dN_dY;
+        Jakobian() = default;
+        Jakobian(int num);
 
         void calcJakob(ElemUniv& elemUniv, double x[4], double y[4], int pointIndex);
         void calcJakobInver(ElemUniv& elemUniv, int pointIndex);
@@ -27,9 +27,8 @@ namespace oc {
         void calc_dN_dX_dN_dY(ElemUniv& elemUniv, int pointIndex);
         void printJakob();
 
-        void computeDerivatives(){
-
-        }
+        void computeH(double k, double dV);
+        void printH();
     };
 
 } // oc
