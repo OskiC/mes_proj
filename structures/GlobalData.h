@@ -26,6 +26,24 @@ namespace oc {
 
         void parseFromFile(const std::string& fileName);
         void printData();
+
+        int getSimulationTime() const;
+
+        int getConductivity() const;
+
+        int getAlfa() const;
+
+        int getTot() const;
+
+        int getInitialTemp() const;
+
+        int getDensity() const;
+
+        int getSpecificHeat() const;
+
+        int getNodesNumber() const;
+
+        int getElementsNumber() const;
     };
 
 } // oc

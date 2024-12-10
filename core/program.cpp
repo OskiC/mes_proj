@@ -37,8 +37,8 @@ namespace oc {
         }
     }
 
-    void Program::zadanie3(){
-        int numPoints = 4; // Number of Gauss points (for 2D, typically 4 points)
+    void Program::zadanie3() {
+        int numPoints = 16; // Number of Gauss points (for 2D, typically 4 points)
 
         ElemUniv elemUniv;
         elemUniv.initialize(numPoints); // 2d - 4punkty
@@ -50,37 +50,140 @@ namespace oc {
         double k = 30;   // Example thermal conductivity
         double dV = 1.0; // Example volume element
 
-        std::vector<Jakobian> jakobians(numPoints);
-        for(int i = 0; i < numPoints; i++){
-            Jakobian jakobian(numPoints);
-            jakobians.push_back(jakobian);
+        Jakobian jakobian(numPoints);
+
+        for (int i = 0; i < numPoints; i++) {
+            jakobian.calcJakob(elemUniv, x, y, i);
+            jakobian.calcDetJ();
+            jakobian.calcJakobInver(elemUniv, i);
+            jakobian.computeHpc(k, i);
         }
 
-        // Loop through each Gauss point to calculate Jacobians and derivatives
-        for(int i = 0; i < numPoints; i++) {
-            jakobians[i].calcJakob(elemUniv, x, y, i);  // Calculate Jacobian at point i
-            jakobians[i].calcDetJ();                    // Calculate determinant of Jacobian
-            jakobians[i].calcJakobInver(elemUniv, i);   // Calculate inverse Jacobian
+        auto H = jakobian.computeTotalH(k, dV);
 
-            std::cout << "Wyznacznik Jakobiana w " << i + 1 << ": " << jakobians[i].getDet() << std::endl;
-            jakobians[i].printJakob();
-
-                // Print derivatives with respect to x and y
-            std::cout << "\nPochodne gaussa w pkt " << i + 1 << ":\n";
-            for (int j = 0; j < 4; j++) {
-                std::cout << "dN" << j + 1 << "/dx: " << jakobians[i].dN_dX[i][j]
-                          << ", dN" << j + 1 << "/dy: " << jakobians[i].dN_dY[i][j] << std::endl;
+        std::cout << "Koncowa macierz H:\n";
+        for (const auto& row : H) {
+            for (double val : row) {
+                if (val != 0.0) {
+                    std::cout << std::setw(10) << std::fixed << std::setprecision(4) << val << " ";
+                } else {
+                    std::cout << std::setw(10) << " ";
+                }
             }
             std::cout << "\n";
-            jakobians[i].computeH(k, dV);
-            std::cout << "Macierz H:" << std::endl;
-            jakobians[i].printH();
         }
+    }
 
+    void Program::zadanie4(std::string &fName){
+        oc::GlobalData globalData{};
+        globalData.parseFromFile(fName);
+
+        oc::Grid grid;
+        grid.parseNodes(fName);
+        grid.parseElements(fName);
+
+        double k = globalData.getConductivity();
+        double dV = 1.0;
+
+        int numPoints = 16;
+
+        const auto& elements = grid.getElements();
+        const auto& nodes = grid.getNodes();
+
+        for (const auto& element : elements) {
+            double x[4], y[4];
+
+            for (int i = 0; i < 4; ++i) {
+                int nodeID = element.ID[i] - 1;
+                x[i] = nodes[nodeID].x;
+                y[i] = nodes[nodeID].y;
+            }
+
+            oc::Jakobian jakobian(numPoints);
+            oc::ElemUniv elemUniv;
+            elemUniv.initialize(numPoints);
+            std::vector<std::vector<double>> H_total;
+
+            for (int p = 0; p < numPoints; ++p) {
+                // Calculate the Jacobian for the integration point
+                jakobian.calcJakob(elemUniv, x, y, p);
+                jakobian.calcDetJ();
+                jakobian.calcJakobInver(elemUniv, p);
+                jakobian.calc_dN_dX_dN_dY(elemUniv, p);
+                jakobian.computeHpc(k, p);  // Calculate H matrix for the integration point
+            }
+
+            H_total = jakobian.computeTotalH(k, dV);
+
+            std::cout << "Final H matrix for element " << &element - &elements[0] + 1 << ":\n";
+            for (const auto& row : H_total) {
+                bool firstValue = true;
+                for (double val : row) {
+                    if (val != 0) { // Skip zeros
+                        if (!firstValue) {
+                            std::cout << " ";
+                        }
+                        std::cout << std::setw(10) << val;
+                        firstValue = false;
+                    }
+                }
+                std::cout << "\n";
+            }
+            std::cout << "-----------------------------\n";
+        }
 
     }
 
-    void Program::zadanie4(){
+    void Program::zadanie5(std::string& fName) {
+        oc::GlobalData globalData{};
+        globalData.parseFromFile(fName);
+
+        oc::Grid grid;
+        grid.parseNodes(fName);
+        grid.parseElements(fName);
+
+        double k = globalData.getConductivity();
+        double dV = 1.0;
+        int numPoints = 16;
+
+        const auto &elements = grid.getElements();
+        const auto &nodes = grid.getNodes();
+
+        // Tworzymy obiekt klasy SolvSystem z liczbą węzłów
+        oc::SolvSystem solvSystem(nodes.size());
+
+        // Przechodzimy przez wszystkie elementy i obliczamy macierz H
+        for (const auto& element : elements) {
+            double x[4], y[4];
+
+            // Wczytujemy współrzędne węzłów
+            for (int i = 0; i < 4; ++i) {
+                int nodeID = element.ID[i] - 1;
+                x[i] = nodes[nodeID].x;
+                y[i] = nodes[nodeID].y;
+            }
+
+            // Inicjalizujemy obiekt Jakobianu i innych pomocniczych
+            oc::Jakobian jakobian(numPoints);
+            oc::ElemUniv elemUniv;
+            elemUniv.initialize(numPoints);
+
+            // Tablica na macierz H
+            std::vector<std::vector<double>> H_total(numPoints, std::vector<double>(numPoints, 0.0));
+
+            for (int p = 0; p < numPoints; ++p) {
+                jakobian.calcJakob(elemUniv, x, y, p);
+                jakobian.calcDetJ();
+                jakobian.calcJakobInver(elemUniv, p);
+                jakobian.calc_dN_dX_dN_dY(elemUniv, p);
+                jakobian.computeHpc(k, p);  // Obliczamy H dla punktu całkowania
+            }
+
+            H_total = jakobian.computeTotalH(k, dV);
+
+        }
+
+        solvSystem.printMatrix();
     }
 
 

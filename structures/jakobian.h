@@ -2,6 +2,8 @@
 #define MES_PROJ_JAKOBIAN_H
 
 #include "elemuniv.h"
+#include "..\structures\GlobalData.h"
+#include <iomanip>
 
 namespace oc {
 
@@ -11,7 +13,7 @@ namespace oc {
         double J1[2][2]; // J^-1
         double detJ;
         int numPoints;
-        std::vector<std::vector<double>> H;
+        std::vector<std::vector<std::vector<double>>> Hpc_list;
 
 
     public:
@@ -27,7 +29,9 @@ namespace oc {
         void calc_dN_dX_dN_dY(ElemUniv& elemUniv, int pointIndex);
         void printJakob();
 
-        void computeH(double k, double dV);
+        void computeHpc(double k, int pointIndex);
+        std::vector<std::vector<double>> computeTotalH(double k, double dV);
+
         void printH();
     };
 

@@ -5,6 +5,7 @@
 #include "..\structures\grid.h"
 #include "..\structures\structs.h"
 #include "..\helpers\gauss.h"
+#include "..\structures\solvSystem.h"
 
 namespace oc {
 
@@ -15,7 +16,8 @@ namespace oc {
         void zadanie1(std::string &fName);
         void zadanie2();
         void zadanie3();
-        void zadanie4();
+        void zadanie4(std::string &fName);
+        void zadanie5(std::string &fName);
 
     };
 

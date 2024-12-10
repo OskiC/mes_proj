@@ -18,4 +18,6 @@ add_executable(MES_proj main.cpp
         structures/jakobian.h
         structures/elemuniv.cpp
         structures/elemuniv.h
+        structures/solvSystem.cpp
+        structures/solvSystem.h
 )

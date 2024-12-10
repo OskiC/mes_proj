@@ -62,4 +62,40 @@ namespace oc {
         std::cout << "Elements number: " << elementsNumber << "\n";
     }
 
+    int GlobalData::getSimulationTime() const {
+        return simulationTime;
+    }
+
+    int GlobalData::getConductivity() const {
+        return conductivity;
+    }
+
+    int GlobalData::getAlfa() const {
+        return alfa;
+    }
+
+    int GlobalData::getTot() const {
+        return tot;
+    }
+
+    int GlobalData::getInitialTemp() const {
+        return initialTemp;
+    }
+
+    int GlobalData::getDensity() const {
+        return density;
+    }
+
+    int GlobalData::getSpecificHeat() const {
+        return specificHeat;
+    }
+
+    int GlobalData::getNodesNumber() const {
+        return nodesNumber;
+    }
+
+    int GlobalData::getElementsNumber() const {
+        return elementsNumber;
+    }
+
 } // oc

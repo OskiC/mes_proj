@@ -99,4 +99,13 @@ namespace oc {
             std::cout << std::endl;
         }
     }
+
+    const std::vector<Node> &Grid::getNodes() const {
+        return nodes;
+    }
+
+    const std::vector<Element> &Grid::getElements() const {
+        return elements;
+    }
+
 } // oc
