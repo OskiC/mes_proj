@@ -14,6 +14,7 @@ namespace oc {
 
         std::string line;
         bool inNodeSection = false;
+        bool inBCSection = false;
 
         while (std::getline(inputFile, line)) {
             if (line.find("*Node") != std::string::npos) {
@@ -21,20 +22,43 @@ namespace oc {
                 continue;
             }
 
+            if (line.find("*BC") != std::string::npos) {
+                inNodeSection = false;
+                inBCSection = true;
+                continue;
+            }
+
             if (inNodeSection) {
                 if (line.empty() || line[0] == '*') {
                     inNodeSection = false;
-                    break;
+                    continue;
                 }
 
                 std::istringstream iss(line);
                 int nodeNumber;
                 double x, y;
-                char comma;  // To handle commas in the input
+                char comma;
 
                 if (iss >> nodeNumber >> comma >> x >> comma >> y) {
                     Node newNode = { x, y };
                     nodes.push_back(newNode);
+                }
+            }
+
+            if (inBCSection) {
+                if (line.empty() || line[0] == '*') {
+                    inBCSection = false;
+                    break;
+                }
+
+                std::istringstream iss(line);
+                int nodeID;
+                char comma;
+
+                while (iss >> nodeID >> comma) {
+                    if (nodeID > 0 && nodeID <= nodes.size()) {
+                        nodes[nodeID - 1].bc = true; // Oznacz węzeł jako należący do BC
+                    }
                 }
             }
         }
@@ -72,8 +96,8 @@ namespace oc {
                 char comma;
 
                 if (iss >> elementID >> comma >> node1 >> comma >> node2 >> comma >> node3 >> comma >> node4) {
-                    // Create a new Element struct and push it to the vector
-                    Element newElement = { {node1, node2, node3, node4} };
+                    // Używamy nowego konstruktora do inicjalizacji elementu
+                    Element newElement(node1, node2, node3, node4);
                     elements.push_back(newElement);
                 }
             }
@@ -86,6 +110,12 @@ namespace oc {
     void Grid::printNodes() {
         for (int i = 0; i < this->nodes.size(); ++i) {
             std::cout << "Node " << i + 1 << ": x = " << this->nodes[i].x << ", y = " << this->nodes[i].y << std::endl;
+        }
+    }
+
+    void Grid::calculateAllHbc() {
+        for (auto& element : elements) {
+            element.calculateHbc(nodes);
         }
     }
 

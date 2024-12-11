@@ -1,5 +1,6 @@
 #include "program.h"
 
+
 namespace oc {
 
     void Program::zadanie1(std::string &fName){
@@ -144,7 +145,7 @@ namespace oc {
 
         double k = globalData.getConductivity();
         double dV = 1.0;
-        int numPoints = 16;
+        int numPoints = 4;
 
         const auto &elements = grid.getElements();
         const auto &nodes = grid.getNodes();
@@ -191,6 +192,7 @@ namespace oc {
                 }
             }
         }
+        globalData.printData();
         solvSystem.printMatrix();
     }
 

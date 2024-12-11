@@ -20,4 +20,7 @@ add_executable(MES_proj main.cpp
         structures/elemuniv.h
         structures/solvSystem.cpp
         structures/solvSystem.h
+        structures/Surface.cpp
+        structures/Surface.h
+        helpers/functions.h
 )

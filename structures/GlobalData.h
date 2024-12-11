@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <vector>
 
 namespace oc {
 
@@ -20,6 +21,7 @@ namespace oc {
         int specificHeat;
         int nodesNumber;
         int elementsNumber;
+        std::vector<int> bc;
 
     public:
         GlobalData() = default;
@@ -44,6 +46,10 @@ namespace oc {
         int getNodesNumber() const;
 
         int getElementsNumber() const;
+
+        std::vector<int>& getBoundaryConditions();
+
+
     };
 
 } // oc
