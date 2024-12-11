@@ -9,17 +9,8 @@ namespace oc {
         globalMatrix.resize(numNodes, std::vector<double>(numNodes, 0.0));
     }
 
-    void SolvSystem::assembleLocalToGlobal(const std::vector<std::vector<double>>& localH, const std::vector<int>& elementNodes){
-        for (size_t i = 0; i < elementNodes.size(); ++i) {
-            for (size_t j = 0; j < elementNodes.size(); ++j) {
-                int globalRow = elementNodes[i] - 1;
-                int globalCol = elementNodes[j] - 1;
-
-                globalMatrix[globalRow][globalCol] += localH[i][j];
-            }
-        }
-
-
+    void SolvSystem::addToGlobalMatrix(int i, int j, double value) {
+        globalMatrix[i][j] += value;
     }
 
     void SolvSystem::printMatrix() {

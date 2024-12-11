@@ -6,8 +6,8 @@ Tot 1200
 InitialTemp 100
 Density 7800
 SpecificHeat 700
-Nodesnumber 961
-Elementsnumber 900
+Nodes number 961
+Elements number 900
 *Node
       1,  0.100000001, 0.00499999989
       2, 0.0966666639, 0.00499999989

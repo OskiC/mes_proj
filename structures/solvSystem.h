@@ -18,7 +18,7 @@ namespace oc {
 
     public:
         SolvSystem(int numNodes);
-        void assembleLocalToGlobal(const std::vector<std::vector<double>>& localH, const std::vector<int>& elementNodes);
+        void addToGlobalMatrix(int i, int j, double value);
         void printMatrix();
         void solve();
     };

@@ -153,7 +153,7 @@ namespace oc {
         oc::SolvSystem solvSystem(nodes.size());
 
         // Przechodzimy przez wszystkie elementy i obliczamy macierz H
-        for (const auto& element : elements) {
+        for (const auto &element: elements) {
             double x[4], y[4];
 
             // Wczytujemy współrzędne węzłów
@@ -168,23 +168,30 @@ namespace oc {
             oc::ElemUniv elemUniv;
             elemUniv.initialize(numPoints);
 
-            // Tablica na macierz H
-            std::vector<std::vector<double>> H_total(numPoints, std::vector<double>(numPoints, 0.0));
+            // Tablica na macierz H lokalną
+            std::vector<std::vector<double>> H_local(4, std::vector<double>(4, 0.0));
 
             for (int p = 0; p < numPoints; ++p) {
                 jakobian.calcJakob(elemUniv, x, y, p);
                 jakobian.calcDetJ();
                 jakobian.calcJakobInver(elemUniv, p);
                 jakobian.calc_dN_dX_dN_dY(elemUniv, p);
-                jakobian.computeHpc(k, p);  // Obliczamy H dla punktu całkowania
+                jakobian.computeHpc(k, p); // Obliczamy H dla punktu całkowania
             }
 
-            H_total = jakobian.computeTotalH(k, dV);
+            H_local = jakobian.computeTotalH(k, dV); // Sumujemy wkład punktów całkowania
 
+            // Agregacja do macierzy globalnej
+            for (int i = 0; i < 4; ++i) {
+                for (int j = 0; j < 4; ++j) {
+                    int global_i = element.ID[i] - 1; // ID globalne wiersza
+                    int global_j = element.ID[j] - 1; // ID globalne kolumny
+
+                    solvSystem.addToGlobalMatrix(global_i, global_j, H_local[i][j]);
+                }
+            }
         }
-
         solvSystem.printMatrix();
     }
-
 
 } // oc
