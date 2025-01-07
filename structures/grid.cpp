@@ -55,10 +55,11 @@ namespace oc {
                 int nodeID;
                 char comma;
 
-                while (iss >> nodeID >> comma) {
-                    if (nodeID > 0 && nodeID <= nodes.size()) {
-                        nodes[nodeID - 1].bc = true; // Oznacz węzeł jako należący do BC
+                while (iss >> nodeID) {
+                    if (nodeID >= 0 && nodeID <= nodes.size()) {
+                        nodes[nodeID-1].bc = true; // Oznacz węzeł jako należący do BC
                     }
+                    iss >> comma;
                 }
             }
         }
@@ -113,11 +114,11 @@ namespace oc {
         }
     }
 
-    void Grid::calculateAllHbc() {
+/*    void Grid::calculateAllHbc() {
         for (auto& element : elements) {
             element.calculateHbc(nodes);
         }
-    }
+    }*/
 
     void Grid::printElemets() {
         std::cout << "Elements:" << std::endl;

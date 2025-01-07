@@ -17,6 +17,7 @@ namespace oc {
         int ID[4];
         Jakobian jakobian;
         double Hbc[4][4] = {0};
+        std::vector<double> P;
 
         Element(int id1, int id2, int id3, int id4) {
             ID[0] = id1;
@@ -25,7 +26,8 @@ namespace oc {
             ID[3] = id4;
         }
 
-        void calculateHbc(const std::vector<Node>& nodes);
+        void calculateHbc(const std::vector<Node>& nodes, double alfa);
+        void calculateP(const std::vector<Node>& nodes, double alfa, double t_ot);
     };
 
 

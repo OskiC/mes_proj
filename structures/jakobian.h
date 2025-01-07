@@ -24,10 +24,12 @@ namespace oc {
 
         void calcJakob(ElemUniv& elemUniv, double x[4], double y[4], int pointIndex);
         void calcJakobInver(ElemUniv& elemUniv, int pointIndex);
+        void printJakob();
         void calcDetJ();
         double getDet();
         void calc_dN_dX_dN_dY(ElemUniv& elemUniv, int pointIndex);
-        void printJakob();
+        [[nodiscard]] const std::vector<std::vector<double>>& get_dN_dX() const { return dN_dX; }
+        [[nodiscard]] const std::vector<std::vector<double>>& get_dN_dY() const { return dN_dY; }
 
         void computeHpc(double k, int pointIndex);
         std::vector<std::vector<double>> computeTotalH(double k, double dV);
