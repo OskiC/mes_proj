@@ -1,6 +1,8 @@
 #ifndef MES_PROJ_PROGRAM_H
 #define MES_PROJ_PROGRAM_H
 
+
+#include <algorithm>
 #include "..\structures\GlobalData.h"
 #include "..\structures\grid.h"
 #include "..\structures\structs.h"
@@ -20,6 +22,8 @@ namespace oc {
         void zadanie4(std::string &fName);
         void zadanie5(std::string &fName);
         void zadanie6(std::string &fName);
+        void zadanie7(std::string &fName);
+        void zadanie8(std::string &fName);
 
     };
 

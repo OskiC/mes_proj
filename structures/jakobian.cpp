@@ -102,7 +102,7 @@ namespace oc {
 
             for (int i = 0; i < numPoints; i++) {
                 for (int j = 0; j < numPoints; j++) {
-                    H[i][j] += Hpc[i][j] * weightFactor * dV;
+                    H[i][j] += Hpc[i][j] * weightFactor;
                 }
             }
 

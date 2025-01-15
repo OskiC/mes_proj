@@ -13,6 +13,10 @@ namespace oc {
     private:
         int simulationTime;
         int simulationStepTime;
+    public:
+        int getSimulationStepTime() const;
+
+    private:
         int conductivity;
         int alfa;
         int tot;

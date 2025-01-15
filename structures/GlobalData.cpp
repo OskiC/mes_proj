@@ -121,4 +121,8 @@ namespace oc {
         return bc;
     }
 
+    int GlobalData::getSimulationStepTime() const {
+        return simulationStepTime;
+    }
+
 } // oc
