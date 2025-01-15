@@ -19,8 +19,8 @@ namespace oc {
             eta = {-a, -a, -a, 0, 0, 0, a, a, a};
         } else if (num == 16) {
             // 4x4 Gauss Quadrature Points
-            double a = 0.8611363116;
-            double b = 0.3399810436;
+            double a = sqrt((3 + 2 * sqrt(6.0 / 5.0)) / 7.0);
+            double b = sqrt((3 - 2 * sqrt(6.0 / 5.0)) / 7.0);
             ksi = {-a, -b, b, a, -a, -b, b, a, -a, -b, b, a, -a, -b, b, a};
             eta = {-a, -a, -a, -a, -b, -b, -b, -b, b, b, b, b, a, a, a, a};
         } else {
@@ -36,17 +36,18 @@ namespace oc {
             std::vector<double> dXi_row(num, 0.0);
             std::vector<double> dEta_row(num, 0.0);
 
-            // Compute derivatives based on the 4-node element for each integration point
-            dXi_row[0] = -0.25 * (1 - eta[i]);
-            dXi_row[1] = 0.25 * (1 - eta[i]);
-            dXi_row[2] = 0.25 * (1 + eta[i]);
-            dXi_row[3] = -0.25 * (1 + eta[i]);
+            if (num == 4 || num == 9 || num == 16) {
+                // Compute derivatives based on the 4-node element for each integration point
+                dXi_row[0] = -0.25 * (1 - eta[i]);
+                dXi_row[1] = 0.25 * (1 - eta[i]);
+                dXi_row[2] = 0.25 * (1 + eta[i]);
+                dXi_row[3] = -0.25 * (1 + eta[i]);
 
-            dEta_row[0] = -0.25 * (1 - ksi[i]);
-            dEta_row[1] = -0.25 * (1 + ksi[i]);
-            dEta_row[2] = 0.25 * (1 + ksi[i]);
-            dEta_row[3] = 0.25 * (1 - ksi[i]);
-
+                dEta_row[0] = -0.25 * (1 - ksi[i]);
+                dEta_row[1] = -0.25 * (1 + ksi[i]);
+                dEta_row[2] = 0.25 * (1 + ksi[i]);
+                dEta_row[3] = 0.25 * (1 - ksi[i]);
+            }
 
             dN_dXi[i] = dXi_row;
             dN_dEta[i] = dEta_row;

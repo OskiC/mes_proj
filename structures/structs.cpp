@@ -36,7 +36,7 @@ namespace oc {
                             int local_j = (edge + j) % 4;
 
                             // Adjusting weight calculation
-                            double weight = (ip.weights[gp] * (length / 2)) / 2.0;
+                            long double weight = (ip.weights[gp] * (length / 2)) / 2.0L;
 
                             double contribution = alfa * N_edge[i] * N_edge[j] * weight;
                             //std::cout << "Contribution for (" << local_i << "," << local_j << "): " << contribution << std::endl;
@@ -72,8 +72,8 @@ namespace oc {
                 double x1 = nodes[id1].x, y1 = nodes[id1].y;
                 double x2 = nodes[id2].x, y2 = nodes[id2].y;
 
-                double length = std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
-                double detJ = length / 2.0;
+                long double length = std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
+                long double detJ = length / 2.0L;
 
                 for (int i = 0; i < ip.points.size(); ++i) { // Iterate over Gauss points
                     double ksi = ip.points[i].first; // For edge integration, we use only ksi
@@ -82,7 +82,7 @@ namespace oc {
                     double N2 = (1.0 + ksi) / 2.0;
 
                     // Adjusting weight calculation as per previous discussion
-                    double weight = (ip.weights[i] * detJ) / 2.0;
+                    long double weight = (ip.weights[i] * detJ) / 2.0L;
 
                     P[edge] += weight * alfa * t_ot * N1;
                     P[(edge + 1) % 4] += weight * alfa * t_ot * N2;
@@ -119,7 +119,6 @@ namespace oc {
                     Cpc[r][c] = rho * temp * N[r] * N[c] * detJ;
                 }
             }
-
             // Accumulate into the global C matrix with weights
             for (int r = 0; r < 4; ++r) {
                 for (int c = 0; c < 4; ++c) {
@@ -167,8 +166,8 @@ namespace oc {
                     5.0 / 9 * 5.0 / 9, 8.0 / 9 * 5.0 / 9, 5.0 / 9 * 5.0 / 9
             };
         } else if (num == 16) {
-            double a = 0.8611363116;
-            double b = 0.3399810436;
+            double a = sqrt((3 + 2 * sqrt(6.0 / 5.0)) / 7.0);
+            double b = sqrt((3 - 2 * sqrt(6.0 / 5.0)) / 7.0);
             points = {
                     {-a, -a}, {-b, -a}, {b, -a}, {a, -a},
                     {-a, -b}, {-b, -b}, {b, -b}, {a, -b},
