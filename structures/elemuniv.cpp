@@ -36,18 +36,17 @@ namespace oc {
             std::vector<double> dXi_row(num, 0.0);
             std::vector<double> dEta_row(num, 0.0);
 
-            if (num == 4 || num == 9 || num == 16) {
-                // Compute derivatives based on the 4-node element for each integration point
-                dXi_row[0] = -0.25 * (1 - eta[i]);
-                dXi_row[1] = 0.25 * (1 - eta[i]);
-                dXi_row[2] = 0.25 * (1 + eta[i]);
-                dXi_row[3] = -0.25 * (1 + eta[i]);
+            // Compute derivatives based on the 4-node element for each integration point
+            dXi_row[0] = -0.25 * (1 - eta[i]);
+            dXi_row[1] = 0.25 * (1 - eta[i]);
+            dXi_row[2] = 0.25 * (1 + eta[i]);
+            dXi_row[3] = -0.25 * (1 + eta[i]);
 
-                dEta_row[0] = -0.25 * (1 - ksi[i]);
-                dEta_row[1] = -0.25 * (1 + ksi[i]);
-                dEta_row[2] = 0.25 * (1 + ksi[i]);
-                dEta_row[3] = 0.25 * (1 - ksi[i]);
-            }
+            dEta_row[0] = -0.25 * (1 - ksi[i]);
+            dEta_row[1] = -0.25 * (1 + ksi[i]);
+            dEta_row[2] = 0.25 * (1 + ksi[i]);
+            dEta_row[3] = 0.25 * (1 - ksi[i]);
+
 
             dN_dXi[i] = dXi_row;
             dN_dEta[i] = dEta_row;

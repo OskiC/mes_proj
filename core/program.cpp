@@ -564,7 +564,6 @@ namespace oc {
             std::cout << (timeStepIndex + 1) * timeStep << " " << minTemp << " " << maxTemp << "\n";
         }
 
-        // Final output (optional, since we're outputting at each step)
         std::cout << "\n\nSimulation Completed\n";
     }
 
