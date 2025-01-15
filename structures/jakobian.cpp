@@ -79,7 +79,7 @@ namespace oc {
 
 
 
-    std::vector<std::vector<double>> Jakobian::computeTotalH(double k, double dV) {
+    std::vector<std::vector<double>> Jakobian::computeTotalH(double k) {
         // Define weights for quadrature points
         std::vector<double> weights;
         if (numPoints == 4) {
@@ -102,7 +102,6 @@ namespace oc {
             };
         }
 
-        // Initialize total H matrix as 4x4
         std::vector<std::vector<double>> H(4, std::vector<double>(4, 0.0));
 
         // Sum contributions from each integration point
@@ -112,11 +111,10 @@ namespace oc {
 
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
-                    H[i][j] += Hpc[i][j] * weightFactor * dV;
+                    H[i][j] += Hpc[i][j] * weightFactor;
                 }
             }
         }
-
         return H;
     }
 
@@ -130,14 +128,14 @@ namespace oc {
             }
             std::cout << "\n";
         }
-        /*
+
         std::cout << "\nMatrix J^-1:\n";
         for (int i = 0; i < 2; ++i) {
             for (int j = 0; j < 2; ++j) {
                 std::cout << J1[i][j] << " ";
             }
             std::cout << "\n";
-        }*/
+        }
         std::cout << detJ << std::endl;
     }
 

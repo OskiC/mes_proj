@@ -60,7 +60,7 @@ namespace oc {
             jakobian.computeHpc(k, i);
         }
 
-        auto H = jakobian.computeTotalH(k, dV);
+        auto H = jakobian.computeTotalH(k);
 
         std::cout << "Koncowa macierz H:\n";
         for (const auto& row : H) {
@@ -114,7 +114,7 @@ namespace oc {
                 jakobian.computeHpc(k, p);  // Calculate H matrix for the integration point
             }
 
-            H_total = jakobian.computeTotalH(k, dV);
+            H_total = jakobian.computeTotalH(k);
 
             std::cout << "Final H matrix for element " << &element - &elements[0] + 1 << ":\n";
             for (const auto& row : H_total) {
@@ -180,7 +180,7 @@ namespace oc {
                 jakobian.computeHpc(k, p); // Obliczamy H dla punktu całkowania
             }
 
-            H_local = jakobian.computeTotalH(k, dV); // Sumujemy wkład punktów całkowania
+            H_local = jakobian.computeTotalH(k); // Sumujemy wkład punktów całkowania
 
             // Agregacja do macierzy globalnej
             for (int i = 0; i < 4; ++i) {
@@ -277,7 +277,7 @@ namespace oc {
 
             // Macierz H
             std::vector<std::vector<double>> H_local(4, std::vector<double>(4, 0.0));
-            H_local = jakobian.computeTotalH(k, dV);
+            H_local = jakobian.computeTotalH(k);
 
             std::cout << "Macierz H dla elementu nr " << elemNr << ":\n";
             for (auto &row : H_local) {
@@ -336,7 +336,6 @@ namespace oc {
         double t_ot = globalData.getTot();  // Temperatura otoczenia
         double density = globalData.getDensity();
         double specificHeat = globalData.getSpecificHeat();
-        double dV = 1.0;
         int numPoints = 4;
 
         const auto &elements = grid.getElements();
@@ -352,8 +351,8 @@ namespace oc {
             oc::ElemUniv elemUniv;
             elemUniv.initialize(numPoints);
 
-            std::cout << "-------------------------------------------\n";
-            std::cout << "Element nr: " << elemNr << "\n";
+            //std::cout << "-------------------------------------------\n";
+            //std::cout << "Element nr: " << elemNr << "\n";
 
             // Wczytujemy współrzędne węzłów
             for (int i = 0; i < 4; ++i) {
@@ -369,12 +368,12 @@ namespace oc {
                 jakobian.calcJakobInver(elemUniv, p);
                 jakobian.calc_dN_dX_dN_dY(elemUniv, p);
                 jakobian.computeHpc(k, p);
-                jakobian.printJakob();
+                //jakobian.printJakob();
             }
 
             // Macierz H
             std::vector<std::vector<double>> H_local(4, std::vector<double>(4, 0.0));
-            H_local = jakobian.computeTotalH(k, dV);
+            H_local = jakobian.computeTotalH(k);
 
             // Macierz Hbc
             element.calculateHbc(nodes, alpha, numPoints);
@@ -421,8 +420,7 @@ namespace oc {
         double t_ot = globalData.getTot();  // Ambient temperature
         double density = globalData.getDensity();
         double specificHeat = globalData.getSpecificHeat();
-        double dV = 1.0;
-        int numPoints = 9;
+        int numPoints = 4;
         double timeStep = globalData.getSimulationStepTime(); // Time step Δτ
         int numTimeSteps = globalData.getSimulationTime() / timeStep; // Number of time steps
 
@@ -470,7 +468,7 @@ namespace oc {
                 }
 
                 // Compute local H matrix
-                std::vector<std::vector<double>> H_local = jakobian.computeTotalH(k, dV);
+                std::vector<std::vector<double>> H_local = jakobian.computeTotalH(k);
 
                 // Compute Hbc matrix
                 element.calculateHbc(nodes, alpha, numPoints);

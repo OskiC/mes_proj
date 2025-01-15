@@ -91,22 +91,35 @@ namespace oc {
         }
     }
 
+
     void Element::addMatrixC(double rho, double specificHeat, const std::vector<double>& detJ_values, int numPoints) {
         // Initialize the Integration Points for Gauss Quadrature
-        IntegrationPoints integrationPoints(numPoints);
+        //IntegrationPoints integrationPoints(numPoints);
+
+        std::vector<double> points, weights;
+        if (numPoints == 4) {
+            points = { -1.0 / sqrt(3), 1.0 / sqrt(3) };
+            weights = { 1.0, 1.0 };
+        }
+        else if (numPoints == 9) {
+            points = { -sqrt(3.0 / 5.0), 0.0, sqrt(3.0 / 5.0) };
+            weights = { 5.0 / 9.0, 8.0 / 9.0, 5.0 / 9.0 };
+        }
+        else if (numPoints == 16) {
+            points = { -0.861136311594053, -0.339981043584856, 0.339981043584856, 0.861136311594053 };
+            weights = { 0.347854845137454, 0.652145154862546, 0.652145154862546, 0.347854845137454 };
+        }
 
         // Initialize the C matrix (4x4 for 2D elements)
         std::vector<std::vector<double>> C_temp(4, std::vector<double>(4, 0.0));
 
         // Loop through integration points
-        for (size_t i = 0; i < integrationPoints.points.size(); ++i) {
-            double ksi = integrationPoints.points[i].first;
-            double eta = integrationPoints.points[i].second;
-            double weight = integrationPoints.weights[i];
+        for (size_t i = 0; i < numPoints; ++i) {
+            double ksi = points[i % points.size()];
+            double eta = points[i / points.size()];
 
             // Get the appropriate detJ for this integration point
             double detJ = detJ_values[i];
-            //std::cout << "detJ for integration point " << i + 1 << ": " << detJ << std::endl;
 
             // Shape functions at the integration point
             double N1 = 0.25 * (1 - ksi) * (1 - eta);
@@ -121,44 +134,42 @@ namespace oc {
             std::vector<std::vector<double>> Cpc(4, std::vector<double>(4, 0.0));
             for (int r = 0; r < 4; ++r) {
                 for (int c = 0; c < 4; ++c) {
-                    Cpc[r][c] = N[r] * N[c];
+                    Cpc[r][c] += rho * specificHeat * N[r] * N[c] * detJ * weights[i / points.size()] * weights[i % points.size()];
                 }
             }
 
-            // Multiply by rho, specificHeat, and detJ
+
+            // Print the Cpc matrix for debugging (each integration point)
+//            std::cout << "Cpc Matrix for Integration Point " << i + 1 << ":\n";
+//            for (int r = 0; r < 4; ++r) {
+//                for (int c = 0; c < 4; ++c) {
+//                    std::cout << Cpc[r][c] << " ";
+//                }
+//                std::cout << "\n";
+//            }
+
             for (int r = 0; r < 4; ++r) {
                 for (int c = 0; c < 4; ++c) {
-                    Cpc[r][c] *= rho * specificHeat * detJ;
+                    C_temp[r][c] += Cpc[r][c];  // Multiply by the Gauss weight
                 }
             }
 
-            // Accumulate into the temporary C matrix with weights (using the quadrature weights)
-            for (int r = 0; r < 4; ++r) {
-                for (int c = 0; c < 4; ++c) {
-                    C_temp[r][c] += Cpc[r][c] * weight;  // Multiply by the Gauss weight
-                }
-            }
         }
-
-        // Update the actual C matrix of the element with the calculated values
+        //Update the actual C matrix of the element with the calculated values
         for (int r = 0; r < 4; ++r) {
             for (int c = 0; c < 4; ++c) {
                 C[r][c] = C_temp[r][c];  // Update element's C matrix
             }
         }
+        // Print the final C matrix after accumulation
+//        std::cout << "Final C Matrix after Accumulation:\n";
+//        for (int r = 0; r < 4; ++r) {
+//            for (int c = 0; c < 4; ++c) {
+//                std::cout << C_temp[r][c] << " ";
+//            }
+//            std::cout << "\n";
+//        }
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
     IntegrationPoints::IntegrationPoints(int num) {
         points.clear();

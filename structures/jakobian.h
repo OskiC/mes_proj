@@ -33,7 +33,7 @@ namespace oc {
         [[nodiscard]] const std::vector<std::vector<double>>& get_dN_dY() const { return dN_dY; }
 
         void computeHpc(double k, int pointIndex);
-        std::vector<std::vector<double>> computeTotalH(double k, double dV);
+        std::vector<std::vector<double>> computeTotalH(double k);
 
         void printH();
     };
