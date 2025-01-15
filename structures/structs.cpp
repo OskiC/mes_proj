@@ -91,11 +91,12 @@ namespace oc {
         }
     }
 
-    std::vector<std::vector<double>> Element::calculateC(const double rho, const double temp, const double detJ, double numPoints) {
-
+    void Element::addMatrixC(double rho, double specificHeat, const std::vector<double>& detJ_values, int numPoints) {
+        // Initialize the Integration Points for Gauss Quadrature
         IntegrationPoints integrationPoints(numPoints);
+
         // Initialize the C matrix (4x4 for 2D elements)
-        std::vector<std::vector<double>> C(4, std::vector<double>(4, 0.0));
+        std::vector<std::vector<double>> C_temp(4, std::vector<double>(4, 0.0));
 
         // Loop through integration points
         for (size_t i = 0; i < integrationPoints.points.size(); ++i) {
@@ -103,32 +104,59 @@ namespace oc {
             double eta = integrationPoints.points[i].second;
             double weight = integrationPoints.weights[i];
 
+            // Get the appropriate detJ for this integration point
+            double detJ = detJ_values[i];
+            //std::cout << "detJ for integration point " << i + 1 << ": " << detJ << std::endl;
+
             // Shape functions at the integration point
             double N1 = 0.25 * (1 - ksi) * (1 - eta);
             double N2 = 0.25 * (1 + ksi) * (1 - eta);
             double N3 = 0.25 * (1 + ksi) * (1 + eta);
             double N4 = 0.25 * (1 - ksi) * (1 + eta);
 
-            // Shape function matrix (vector form)
+            // Shape function vector
             std::vector<double> N = {N1, N2, N3, N4};
 
-            // Compute Cpc = rho * c_p * (N * N^T)
+            // Compute the outer product N * N^T (equivalent to PcN * PcN^T)
             std::vector<std::vector<double>> Cpc(4, std::vector<double>(4, 0.0));
             for (int r = 0; r < 4; ++r) {
                 for (int c = 0; c < 4; ++c) {
-                    Cpc[r][c] = rho * temp * N[r] * N[c] * detJ;
+                    Cpc[r][c] = N[r] * N[c];
                 }
             }
-            // Accumulate into the global C matrix with weights
+
+            // Multiply by rho, specificHeat, and detJ
             for (int r = 0; r < 4; ++r) {
                 for (int c = 0; c < 4; ++c) {
-                    C[r][c] += Cpc[r][c] * weight;
+                    Cpc[r][c] *= rho * specificHeat * detJ;
+                }
+            }
+
+            // Accumulate into the temporary C matrix with weights (using the quadrature weights)
+            for (int r = 0; r < 4; ++r) {
+                for (int c = 0; c < 4; ++c) {
+                    C_temp[r][c] += Cpc[r][c] * weight;  // Multiply by the Gauss weight
                 }
             }
         }
 
-        return C;
+        // Update the actual C matrix of the element with the calculated values
+        for (int r = 0; r < 4; ++r) {
+            for (int c = 0; c < 4; ++c) {
+                C[r][c] = C_temp[r][c];  // Update element's C matrix
+            }
+        }
     }
+
+
+
+
+
+
+
+
+
+
 
 
 

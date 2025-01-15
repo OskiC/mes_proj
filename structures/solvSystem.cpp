@@ -15,7 +15,7 @@ namespace oc {
         globalMatrix[i][j] += value;
     }
 
-    void SolvSystem::addToGlobalC(const std::vector<std::vector<double>>& localC, const int IDs[]) {
+    void SolvSystem::addToGlobalC(const double localC[4][4], const int IDs[]) {
         for (int i = 0; i < 4; ++i) {
             for (int j = 0; j < 4; ++j) {
                 int global_i = IDs[i] - 1; // Map local row index to global row index
@@ -24,6 +24,7 @@ namespace oc {
             }
         }
     }
+
 
 
     void SolvSystem::addHbcToGlobalMatrix(const std::vector<std::vector<double>>& Hbc_global) {

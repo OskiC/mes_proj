@@ -17,6 +17,7 @@ namespace oc {
 
 
     public:
+        std::vector<double> detJ_values;
         std::vector<std::vector<double>> dN_dX;
         std::vector<std::vector<double>> dN_dY;
         Jakobian() = default;

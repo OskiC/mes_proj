@@ -36,7 +36,8 @@ namespace oc {
         }
 
         void calculateHbc(const std::vector<Node>& nodes, double alfa, int numPoints);
-        std::vector<std::vector<double>> calculateC(const double rho, const double temp, const double detJ, double numPoints);
+        //std::vector<std::vector<double>> calculateC(const double rho, const double temp, const double detJ, double numPoints);
+        void addMatrixC(double rho, double specificHeat, const std::vector<double>& detJ_values, int numPoints);
         void calculateP(const std::vector<Node>& nodes, double alfa, double t_ot, int numPoints);
     };
 

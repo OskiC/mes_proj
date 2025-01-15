@@ -332,12 +332,12 @@ namespace oc {
         grid.parseElements(fName);
 
         double k = globalData.getConductivity();
-        double alpha = globalData.getAlfa(); // Współczynnik wymiany ciepła
+        double alpha = globalData.getAlfa();  // Współczynnik wymiany ciepła
         double t_ot = globalData.getTot();  // Temperatura otoczenia
         double density = globalData.getDensity();
         double specificHeat = globalData.getSpecificHeat();
         double dV = 1.0;
-        int numPoints = 16;
+        int numPoints = 4;
 
         const auto &elements = grid.getElements();
         const auto &nodes = grid.getNodes();
@@ -363,73 +363,24 @@ namespace oc {
             }
 
             // Punkt całkowania
-            //std::cout << "Punkty calkowania:\n";
-            for (int p = 0; p < numPoints; ++p) {
-              //  std::cout << "Punkt nr " << p + 1
-                //          << " ksi = " << elemUniv.ksi[p]
-                  //        << ", eta = " << elemUniv.eta[p] << "\n";
-            }
-
-            // Jakobian i jego detJ
-
-
             for (int p = 0; p < numPoints; ++p) {
                 jakobian.calcJakob(elemUniv, x, y, p);
                 jakobian.calcDetJ();
                 jakobian.calcJakobInver(elemUniv, p);
                 jakobian.calc_dN_dX_dN_dY(elemUniv, p);
                 jakobian.computeHpc(k, p);
-
-                //std::cout << "Macierz Jakobianu dla punktu nr " << p + 1 << ":\n";
-                //jakobian.printJakob();
-                //std::cout << "det[J] = " << jakobian.getDet() << "\n";
-
-                //std::cout << "Wartosci dN/dx oraz dN/dy:\n";
-                //std::cout << "Wartosci dN/dx dla punktu nr " << p + 1 << ":\n";
-                const auto& dN_dX = jakobian.get_dN_dX();
-                for (const auto& row : dN_dX) {
-                    for (double val : row) {
-                  //      std::cout << val << " ";
-                    }
-                    //std::cout << "\n";
-                }
-
-                //std::cout << "Wartosci dN/dy dla punktu nr " << p + 1 << ":\n";
-                const auto& dN_dY = jakobian.get_dN_dY();
-                for (const auto& row : dN_dY) {
-                    for (double val : row) {
-                  //      std::cout << val << " ";
-                    }
-                    //std::cout << "\n";
-                }
+                jakobian.printJakob();
             }
 
             // Macierz H
             std::vector<std::vector<double>> H_local(4, std::vector<double>(4, 0.0));
             H_local = jakobian.computeTotalH(k, dV);
 
-            //std::cout << "Macierz H dla elementu nr " << elemNr << ":\n";
-            for (auto &row : H_local) {
-                for (double val : row) {
-                //    std::cout << val << " ";
-                }
-                //std::cout << "\n";
-
-            }
-
             // Macierz Hbc
             element.calculateHbc(nodes, alpha, numPoints);
-            //std::cout << "Macierz Hbc dla elementu nr " << elemNr << ":\n";
-            for (auto &row : element.Hbc) {
-                for (double val : row) {
-                //    std::cout << val << " ";
-                }
-                //std::cout << "\n";
 
-            }
-
-            for(int i = 0; i < 4; ++i){
-                for(int j = 0; j < 4; ++j){
+            for (int i = 0; i < 4; ++i) {
+                for (int j = 0; j < 4; ++j) {
                     int global_i = element.ID[i] - 1;
                     int global_j = element.ID[j] - 1;
 
@@ -441,29 +392,21 @@ namespace oc {
             // Wektor P
             element.calculateP(nodes, alpha, t_ot, numPoints);
             solvSystem.addToGlobalVector(element.P, element.ID);
-            std::cout << "Wektor {P} dla elementu nr " << elemNr << ":\n";
-            for (double val : element.P) {
-                std::cout << val << " ";
-            }
-            std::cout << "\n";
 
-            std::vector<std::vector<double>> C = element.calculateC(density, specificHeat, jakobian.getDet(), numPoints);
-            solvSystem.addToGlobalC(C, element.ID);
-            //std::cout << "Matrix C dla elementu nr: " << elemNr << std::endl;
-            for (const auto& row : C) {
-                for (double val : row) {
-              //      std::cout << val << " ";
-                }
-                //std::cout << "\n";
-            }
+            // Now pass detJ values to addMatrixC
+            element.addMatrixC(density, specificHeat, jakobian.detJ_values, numPoints);
+            solvSystem.addToGlobalC(element.C, element.ID);  // Accumulate local C matrix into global C
 
             elemNr++;
         }
-        std::cout << "\n\n\n";
-        solvSystem.printMatrix();
-        solvSystem.printVector();
-        solvSystem.printC();
+
+        solvSystem.printMatrix();  // Global matrix H
+        solvSystem.printVector();  // Global vector P
+        solvSystem.printC();      // Global matrix C
     }
+
+
+
 
     void Program::zadanie8(std::string &fName) {
         oc::GlobalData globalData{};
@@ -479,7 +422,7 @@ namespace oc {
         double density = globalData.getDensity();
         double specificHeat = globalData.getSpecificHeat();
         double dV = 1.0;
-        int numPoints = 16;
+        int numPoints = 9;
         double timeStep = globalData.getSimulationStepTime(); // Time step Δτ
         int numTimeSteps = globalData.getSimulationTime() / timeStep; // Number of time steps
 
@@ -546,8 +489,8 @@ namespace oc {
                 solvSystem.addToGlobalVector(element.P, element.ID);
 
                 // Compute C matrix
-                std::vector<std::vector<double>> C = element.calculateC(density, specificHeat, jakobian.getDet(), numPoints);
-                solvSystem.addToGlobalC(C, element.ID);
+                element.addMatrixC(density, specificHeat, jakobian.detJ_values, numPoints);
+                solvSystem.addToGlobalC(element.C, element.ID);
             }
 
             // Solve the system for each time step

@@ -21,7 +21,7 @@ namespace oc {
         SolvSystem(int numNodes);
         void addToGlobalMatrix(int i, int j, double value);
         void addHbcToGlobalMatrix(const std::vector<std::vector<double>>& Hbc_global);
-        void addToGlobalC(const std::vector<std::vector<double>>& localC, const int IDs[]);
+        void addToGlobalC(const double localC[4][4], const int IDs[]);
         void addToGlobalVector(const std::vector<double>& localP, const int IDs[]);
 
         void printMatrix();
