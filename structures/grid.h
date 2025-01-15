@@ -26,9 +26,7 @@ namespace oc {
 
         void printNodes();
         void printElemets();
-
-        void calculateAllHbc();
-
+        
         const std::vector<Node> &getNodes() const;
 
         const std::vector<Element> &getElements() const;

@@ -351,8 +351,8 @@ namespace oc {
             oc::ElemUniv elemUniv;
             elemUniv.initialize(numPoints);
 
-            //std::cout << "-------------------------------------------\n";
-            //std::cout << "Element nr: " << elemNr << "\n";
+            std::cout << "-------------------------------------------\n";
+            std::cout << "Element nr: " << elemNr << "\n";
 
             // Wczytujemy współrzędne węzłów
             for (int i = 0; i < 4; ++i) {
@@ -392,7 +392,6 @@ namespace oc {
             element.calculateP(nodes, alpha, t_ot, numPoints);
             solvSystem.addToGlobalVector(element.P, element.ID);
 
-            // Now pass detJ values to addMatrixC
             element.addMatrixC(density, specificHeat, jakobian.detJ_values, numPoints);
             solvSystem.addToGlobalC(element.C, element.ID);  // Accumulate local C matrix into global C
 

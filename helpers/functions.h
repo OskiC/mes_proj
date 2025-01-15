@@ -6,7 +6,6 @@
 #define MES_PROJ_FUNCTIONS_H
 #include <vector>
 #include <cmath>
-#include "..\structures\Surface.h"
 
 
 namespace oc {

@@ -23,8 +23,6 @@ namespace oc {
                 double length = std::sqrt(std::pow(nodes[n2].x - nodes[n1].x, 2) +
                                           std::pow(nodes[n2].y - nodes[n1].y, 2));
 
-                //std::cout << "Edge " << edge << " length: " << length << ", Nodes: " << n1 << ", " << n2 << std::endl;
-
                 for (int gp = 0; gp < ip.points.size(); gp++) {
                     double ksi = ip.points[gp].first;
 
@@ -39,24 +37,12 @@ namespace oc {
                             long double weight = (ip.weights[gp] * (length / 2)) / 2.0L;
 
                             double contribution = alfa * N_edge[i] * N_edge[j] * weight;
-                            //std::cout << "Contribution for (" << local_i << "," << local_j << "): " << contribution << std::endl;
                             Hbc[local_i][local_j] += contribution;
                         }
                     }
                 }
             }
         }
-        /*
-        // Print final Hbc matrix
-        std::cout << "Final Hbc matrix:" << std::endl;
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                std::cout << Hbc[i][j] << " ";
-            }
-            std::cout << std::endl;
-        }
-        std::cout << "----------------------------------------" << std::endl;
-        */
     }
 
     void Element::calculateP(const std::vector<Node> &nodes, double alfa, double t_ot, int numPoints) {
@@ -81,7 +67,7 @@ namespace oc {
                     double N1 = (1.0 - ksi) / 2.0;
                     double N2 = (1.0 + ksi) / 2.0;
 
-                    // Adjusting weight calculation as per previous discussion
+                    // Adjusting weight calculation
                     long double weight = (ip.weights[i] * detJ) / 2.0L;
 
                     P[edge] += weight * alfa * t_ot * N1;
@@ -93,9 +79,6 @@ namespace oc {
 
 
     void Element::addMatrixC(double rho, double specificHeat, const std::vector<double>& detJ_values, int numPoints) {
-        // Initialize the Integration Points for Gauss Quadrature
-        //IntegrationPoints integrationPoints(numPoints);
-
         std::vector<double> points, weights;
         if (numPoints == 4) {
             points = { -1.0 / sqrt(3), 1.0 / sqrt(3) };
@@ -130,7 +113,6 @@ namespace oc {
             // Shape function vector
             std::vector<double> N = {N1, N2, N3, N4};
 
-            // Compute the outer product N * N^T (equivalent to PcN * PcN^T)
             std::vector<std::vector<double>> Cpc(4, std::vector<double>(4, 0.0));
             for (int r = 0; r < 4; ++r) {
                 for (int c = 0; c < 4; ++c) {
@@ -138,19 +120,9 @@ namespace oc {
                 }
             }
 
-
-            // Print the Cpc matrix for debugging (each integration point)
-//            std::cout << "Cpc Matrix for Integration Point " << i + 1 << ":\n";
-//            for (int r = 0; r < 4; ++r) {
-//                for (int c = 0; c < 4; ++c) {
-//                    std::cout << Cpc[r][c] << " ";
-//                }
-//                std::cout << "\n";
-//            }
-
             for (int r = 0; r < 4; ++r) {
                 for (int c = 0; c < 4; ++c) {
-                    C_temp[r][c] += Cpc[r][c];  // Multiply by the Gauss weight
+                    C_temp[r][c] += Cpc[r][c];
                 }
             }
 
@@ -161,14 +133,6 @@ namespace oc {
                 C[r][c] = C_temp[r][c];  // Update element's C matrix
             }
         }
-        // Print the final C matrix after accumulation
-//        std::cout << "Final C Matrix after Accumulation:\n";
-//        for (int r = 0; r < 4; ++r) {
-//            for (int c = 0; c < 4; ++c) {
-//                std::cout << C_temp[r][c] << " ";
-//            }
-//            std::cout << "\n";
-//        }
     }
 
     IntegrationPoints::IntegrationPoints(int num) {

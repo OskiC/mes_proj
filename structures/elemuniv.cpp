@@ -32,7 +32,6 @@ namespace oc {
             return;
         }
 
-        // Resize and calculate dN_dXi and dN_dEta for each integration point
         dN_dXi.resize(num);
         dN_dEta.resize(num);
 

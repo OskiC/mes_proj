@@ -8,7 +8,7 @@ int main() {
     std::string fName2 = "../data/Test2_4_4_MixGrid.txt";
     std::string fName3 = "../data/Test3_31_31_kwadrat.txt";
 
-    ourProgram.zadanie8(fName3);
+    ourProgram.zadanie8(fName2);
     //ourProgram.zadanie1(fName);
     //ourProgram.zadanie2();
     //ourProgram.zadanie3();

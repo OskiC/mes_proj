@@ -113,13 +113,7 @@ namespace oc {
             std::cout << "Node " << i + 1 << ": x = " << this->nodes[i].x << ", y = " << this->nodes[i].y << std::endl;
         }
     }
-
-/*    void Grid::calculateAllHbc() {
-        for (auto& element : elements) {
-            element.calculateHbc(nodes);
-        }
-    }*/
-
+    
     void Grid::printElemets() {
         std::cout << "Elements:" << std::endl;
         for (int i = 0; i < this->elements.size(); ++i) {

@@ -25,16 +25,6 @@ namespace oc {
         }
     }
 
-
-
-    void SolvSystem::addHbcToGlobalMatrix(const std::vector<std::vector<double>>& Hbc_global) {
-        for (int i = 0; i < globalMatrix.size(); ++i) {
-            for (int j = 0; j < globalMatrix[i].size(); ++j) {
-                globalMatrix[i][j] += Hbc_global[i][j];
-            }
-        }
-    }
-
     void SolvSystem::printMatrix() {
         for (const auto& row : globalMatrix) {
             for (double val : row) {
@@ -149,12 +139,6 @@ namespace oc {
 
         // Solve the system
         this->solveSystem(H_plus_C_over_Dt, rightHandSide, t1);
-
-        //std::cout << "Temperatures after solving:\n";
-        //for (double temp : t1) {
-          //  std::cout << temp << " ";
-        //}
-        //std::cout << "\n\n";
     }
 
     const std::vector<std::vector<double>> &SolvSystem::getGlobalMatrix() const {
@@ -168,6 +152,4 @@ namespace oc {
     const std::vector<std::vector<double>> &SolvSystem::getGlobalC() const {
         return globalC;
     }
-
-
 } // oc
