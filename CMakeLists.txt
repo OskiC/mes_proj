@@ -14,4 +14,11 @@ add_executable(MES_proj main.cpp
         helpers/gauss.h
         core/program.cpp
         core/program.h
+        structures/jakobian.cpp
+        structures/jakobian.h
+        structures/elemuniv.cpp
+        structures/elemuniv.h
+        structures/solvSystem.cpp
+        structures/solvSystem.h
+        helpers/functions.h
 )

@@ -5,43 +5,42 @@
 #ifndef MES_PROJ_STRUCTS_H
 #define MES_PROJ_STRUCTS_H
 
-#include <vector>
-#include <cmath>
-#include <iostream>
+#include <cstring>
+#include "jakobian.h"
 
 namespace oc {
-    struct ElemUniv{
-        std::vector<double> ksi;
-        std::vector<double> eta;
+    struct IntegrationPoints{
+        std::vector<double> weights;
+        std::vector<std::pair<double, double>> points;
 
-        std::vector<std::vector<double>> dN_dXi;
-        std::vector<std::vector<double>> dN_dEta;
-
-        void initialize(int num);
-    };
-
-    class Jakobian{
-    private:
-        double J[2][2];
-        double J1[2][2]; // J^-1
-        double detJ;
-        
-    public:
-        void calcJakob(ElemUniv& elemUniv, double x[4], double y[4], int pointIndex);
-        void calcJakobInver();
-        void calcDetJ();
-        double getDet();
-        void printJakob();
+        IntegrationPoints(int num);
     };
 
     struct Node {
         double x, y;
+        bool bc = false;
     };
 
     struct Element {
         int ID[4];
         Jakobian jakobian;
+        double Hbc[4][4] = {0};
+        double C[4][4] = {0};
+        std::vector<double> P;
+
+        Element(int id1, int id2, int id3, int id4) {
+            ID[0] = id1;
+            ID[1] = id2;
+            ID[2] = id3;
+            ID[3] = id4;
+        }
+
+        void calculateHbc(const std::vector<Node>& nodes, double alfa, int numPoints);
+        void addMatrixC(double rho, double specificHeat, const std::vector<double>& detJ_values, int numPoints);
+        void calculateP(const std::vector<Node>& nodes, double alfa, double t_ot, int numPoints);
     };
+
+
 
 
 } // oc

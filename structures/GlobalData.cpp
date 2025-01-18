@@ -43,6 +43,20 @@ namespace oc {
             else if (line.find("Elementsnumber") != std::string::npos) {
                 iss >> key >> elementsNumber;
             }
+            else if (line.find("*BC") != std::string::npos) {
+                // Wczytanie węzłów warunków brzegowych
+                std::string nodesLine;
+                std::getline(inputFile, nodesLine); // wczytujemy linię z węzłami
+                std::istringstream nodesStream(nodesLine);
+                std::string node;
+                while (std::getline(nodesStream, node, ',')) { // rozdzielamy po przecinkach
+                    try {
+                        bc.push_back(std::stoi(node));
+                    } catch (const std::invalid_argument& e) {
+                        std::cerr << "Invalid node in BC: " << node << std::endl;
+                    }
+                }
+            }
         }
 
         inputFile.close();
@@ -60,6 +74,55 @@ namespace oc {
         std::cout << "SpecificHeat: " << specificHeat << "\n";
         std::cout << "Nodes number: " << nodesNumber << "\n";
         std::cout << "Elements number: " << elementsNumber << "\n";
+        std::cout << "Boundary Conditions (BC): ";
+        for (const auto& bcx : bc) {
+            std::cout << bcx << " ";
+        }
+        std::cout << "\n";
+    }
+
+    int GlobalData::getSimulationTime() const {
+        return simulationTime;
+    }
+
+    int GlobalData::getConductivity() const {
+        return conductivity;
+    }
+
+    int GlobalData::getAlfa() const {
+        return alfa;
+    }
+
+    int GlobalData::getTot() const {
+        return tot;
+    }
+
+    int GlobalData::getInitialTemp() const {
+        return initialTemp;
+    }
+
+    int GlobalData::getDensity() const {
+        return density;
+    }
+
+    int GlobalData::getSpecificHeat() const {
+        return specificHeat;
+    }
+
+    int GlobalData::getNodesNumber() const {
+        return nodesNumber;
+    }
+
+    int GlobalData::getElementsNumber() const {
+        return elementsNumber;
+    }
+
+    std::vector<int>& GlobalData::getBoundaryConditions(){
+        return bc;
+    }
+
+    int GlobalData::getSimulationStepTime() const {
+        return simulationStepTime;
     }
 
 } // oc

@@ -26,6 +26,12 @@ namespace oc {
 
         void printNodes();
         void printElemets();
+        
+        const std::vector<Node> &getNodes() const;
+
+        const std::vector<Element> &getElements() const;
+
+
     };
 
 } // oc
